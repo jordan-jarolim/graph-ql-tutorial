@@ -8,4 +8,4 @@ const bookSchema = new Schema({
   // id is generated automatically by mLab
 });
 
-module.export = mongoose.model('Book', bookSchema);
+module.exports = mongoose.model('Book', bookSchema);

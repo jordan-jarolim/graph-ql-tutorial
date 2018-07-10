@@ -45,6 +45,8 @@ const BookType = new GraphQLObjectType({
       type: AuthorType,
       // If user requests author inside the request for a book this resolve function will take care of it
       resolve(parent, args) {
+        // mongoDB model
+        return Author.findById(parent.authorId);
 /*         return _.find(authors, { id: parent.authorId });
  */      }
     }
@@ -62,6 +64,7 @@ const AuthorType = new GraphQLObjectType({
     books: {
       type: new GraphQLList(BookType),
       resolve(parent, args) {
+        return Book.find({ authorId: parent.id })
 /*         return _.filter(books, { authorId: parent.id });
  */      }
     }
@@ -79,26 +82,31 @@ const RootQuery = new GraphQLObjectType({
       args: { id: { type: GraphQLID } },
       // parent - relation between data, args contains id param
       resolve(parent, args) {
+        return Book.findById(args.id);
         /*         return _.find(books, { id: args.id });
-         */        // code to get data from db
+         */
       }
     },
     author: {
       type: AuthorType,
       args: { id: { type: GraphQLID } },
       resolve(parent, args) {
+        return Author.findById(args.id);
+
 /*         return _.find(authors, { id: args.id })
  */      }
     },
     books: {
       type: new GraphQLList(BookType),
       resolve(parent, args) {
+        return Book.find({})
 /*         return books;
  */      }
     },
     authors: {
       type: new GraphQLList(AuthorType),
       resolve(parent, args) {
+        return Author.find({})
 /*         return authors;
  */      }
     }
@@ -120,7 +128,25 @@ const Mutation = new GraphQLObjectType({
           name: args.name,
           age: args.age
         });
-        author.save();
+        return author.save();
+      }
+    },
+
+    addBook: {
+      type: BookType,
+      args: {
+        name: { type: GraphQLString },
+        genre: { type: GraphQLString },
+        authorId: { type: GraphQLID },
+      },
+      resolve(parent, args) {
+        // local mongo model imported from model definition in models
+        let book = new Book({
+          name: args.name,
+          genre: args.genre,
+          authorId: args.authorId
+        });
+        return book.save();
       }
     }
   }
