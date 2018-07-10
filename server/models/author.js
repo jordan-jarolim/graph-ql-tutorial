@@ -7,4 +7,4 @@ const authorSchema = new Schema({
   // id is generated automatically by mLab
 });
 
-module.export = mongoose.model('Author', authorSchema);
+module.exports = mongoose.model('Author', authorSchema);
